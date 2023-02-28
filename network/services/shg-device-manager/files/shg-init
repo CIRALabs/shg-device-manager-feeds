@@ -1,0 +1,20 @@
+#!/bin/sh
+
+mkdir -p /etc/shg
+
+# if lighttpd is not enabled nor started set default port for SHG else it would try to listen on port 80
+/etc/init.d/lighttpd enabled
+ENABLED=$?
+/etc/init.d/lighttpd running
+STARTED=$?
+if [ "$ENABLED" = 1 ] && [ "$STARTED" = 1 ]; then
+  echo "server.port = 81" >> /etc/lighttpd/conf.d/52-shg-device-manager.conf
+fi
+/etc/init.d/lighttpd enable || true
+/etc/init.d/lighttpd restart
+
+uci set spin.spind.pubsub_run_mosquitto=1
+/etc/init.d/spin enable || true
+/etc/init.d/spin restart
+
+exit 0
