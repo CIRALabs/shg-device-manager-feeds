@@ -1,0 +1,1 @@
+# shg-device-manager-feeds
